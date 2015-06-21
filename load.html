@@ -1,0 +1,77 @@
+<html>
+<head>
+	<title>Cesium Quantized Mesh Terrain Format Logger</title>
+</head>
+
+<body>
+	<script src="cesium-quantized-mesh-terrain-format-logger.js"></script>
+	<script>
+		function loadTerrain() {
+			var xhr = new XMLHttpRequest();
+
+			xhr.addEventListener('load', function(){
+				if (xhr.status == 200){
+					loadQuantizedMeshTerrainData(xhr.response);
+					document.getElementById("result").style.display = "block";
+				}
+			});
+	
+			xhr.open('GET', document.terrain['url'].value);
+			xhr.setRequestHeader('Accept', 'application/vnd.quantized-mesh,application/octet-stream;q=0.9');
+			xhr.responseType = 'arraybuffer';
+			xhr.send(null);
+			
+			return false;
+		}
+	</script>
+	
+	<form name="terrain" action="javascript:loadTerrain();">
+		<input type="text" name="url" value="URL" />
+		<input name="Submit" type="submit" value="Load" />
+	</form>
+	
+	<div id="result" style="display:none;">
+	<div id="headerTitle">QuantizedMeshHeader</div>
+	<table border="1" id="header">
+		<tr><th>Field</th><th>Value</th></tr>
+	</table>
+
+	<br/><br/>
+	<div id="verticesTitle">Vertices</div>
+	<table border="1" id="vertices">
+		<tr><th>Decoded</th><th>Encoded</th></tr>
+	</table>
+
+	<br/><br/>
+	<div id="trianglesTitle">Vertices</div>
+	<table border="1" id="triangles">
+		<tr><th>#</th><th>Indices</th></tr>
+	</table>
+
+	<br/><br/>
+	<div id="westTitle">Vertices</div>
+	<table border="1" id="west">
+		<tr><th>#</th><th>Indices</th></tr>
+	</table>
+
+	<br/><br/>
+	<div id="southTitle">Vertices</div>
+	<table border="1" id="south">
+		<tr><th>#</th><th>Indices</th></tr>
+	</table>
+	
+	<br/><br/>
+	<div id="eastTitle">Vertices</div>
+	<table border="1" id="east">
+		<tr><th>#</th><th>Indices</th></tr>
+	</table>
+	
+	<br/><br/>
+	<div id="northTitle">Vertices</div>
+	<table border="1" id="north">
+		<tr><th>#</th><th>Indices</th></tr>
+	</table>
+	</div>
+</body>
+
+</html>
