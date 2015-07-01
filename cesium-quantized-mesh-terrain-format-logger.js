@@ -1,7 +1,21 @@
 
 function addRow(table, name, value) {
+	var toCell = function(n) {
+			return "<td>" + n + "</td>";
+	};
+	var concat = function(a, b) {
+			return a + b;
+	};
+
     var newRow = document.createElement('tr');
-    newRow.innerHTML = "<td>" + name + "</td><td>" + value + "</td>";
+    if (name instanceof Array) {
+    	var cells1 = name.map(toCell).reduce(concat);
+    	var cells2 = value.map(toCell).reduce(concat);
+	    newRow.innerHTML = cells1 + cells2;
+    }
+    else {
+	    newRow.innerHTML = "<td>" + name + "</td><td>" + value + "</td>";
+    }
     document.getElementById(table).appendChild(newRow);
     return newRow;
 }
@@ -68,7 +82,7 @@ function loadQuantizedMeshTerrainData(buffer) {
 
     var vertexCount = view.getUint32(pos, true);
 
-    document.getElementById("verticesTitle").innerHTML = "Vertices [u | v | h]: " + vertexCount;
+    document.getElementById("verticesTitle").innerHTML = "Vertices: " + vertexCount;
     pos += Uint32Array.BYTES_PER_ELEMENT;
 
     var encodedVertexBuffer = new Uint16Array(buffer, pos, vertexCount * 3);
@@ -99,7 +113,7 @@ function loadQuantizedMeshTerrainData(buffer) {
         v += zigZagDecode(vBuffer[i]);
         height += zigZagDecode(heightBuffer[i]);
 
-        addRow("vertices", "[" + uBuffer[i] + " | " + vBuffer[i] + " | " + heightBuffer[i] + "]", "[" + u + " | " + v + " | " + height + "]");
+        addRow("vertices", [uBuffer[i], vBuffer[i], heightBuffer[i]], [u, v, height]);
 
         uBuffer[i] = u;
         vBuffer[i] = v;
