@@ -17,7 +17,7 @@
 			});
 	
 			xhr.open('GET', document.terrain['url'].value);
-			xhr.setRequestHeader('Accept', 'application/vnd.quantized-mesh,application/octet-stream;q=0.9');
+			xhr.setRequestHeader('Accept', 'application/vnd.quantized-mesh;extensions=octvertexnormals,application/octet-stream;q=0.9');
 			xhr.responseType = 'arraybuffer';
 			xhr.send(null);
 			
@@ -43,35 +43,43 @@
 	</table>
 
 	<br/><br/>
-	<div id="trianglesTitle">Vertices</div>
+	<div id="trianglesTitle">Triangles</div>
 	<table border="1" id="triangles">
 		<tr><th>#</th><th>Indices</th></tr>
 	</table>
 
 	<br/><br/>
-	<div id="westTitle">Vertices</div>
+	<div id="westTitle">West indices</div>
 	<table border="1" id="west">
 		<tr><th>#</th><th>Indices</th></tr>
 	</table>
 
 	<br/><br/>
-	<div id="southTitle">Vertices</div>
+	<div id="southTitle">South indices</div>
 	<table border="1" id="south">
 		<tr><th>#</th><th>Indices</th></tr>
 	</table>
 	
 	<br/><br/>
-	<div id="eastTitle">Vertices</div>
+	<div id="eastTitle">East indices</div>
 	<table border="1" id="east">
 		<tr><th>#</th><th>Indices</th></tr>
 	</table>
 	
 	<br/><br/>
-	<div id="northTitle">Vertices</div>
+	<div id="northTitle">North indices</div>
 	<table border="1" id="north">
 		<tr><th>#</th><th>Indices</th></tr>
 	</table>
+	
+	<br/><br/>
+	<div id="extNormalsTitle">Extension: vertex normals</div>
+	<table border="1" id="normals">
+		<tr><th>X</th><th>Y</th></tr>
+	</table>
+
 	</div>
+	
 </body>
 
 </html>

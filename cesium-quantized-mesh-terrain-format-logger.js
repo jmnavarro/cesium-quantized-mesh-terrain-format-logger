@@ -186,4 +186,26 @@ function loadQuantizedMeshTerrainData(buffer) {
     for (i = 0; i < northVertexCount; ++i) {
         addRow("north", i, northIndices[i]);
     }
+
+    var encodedNormalBuffer;
+    var waterMaskBuffer;
+    while (pos < view.byteLength) {
+        var extensionId = view.getUint8(pos, true);
+        pos += Uint8Array.BYTES_PER_ELEMENT;
+        var extensionLength = view.getUint32(pos, true);
+        pos += Uint32Array.BYTES_PER_ELEMENT;
+
+        if (extensionId === 1) {
+            encodedNormalBuffer = new Uint8Array(buffer, pos, vertexCount * 2);
+
+            for (i = 0; i < vertexCount; ) {
+                addRow("normals", encodedNormalBuffer[i], encodedNormalBuffer[i+1]);
+                i += 2;
+            }
+
+        } else if (extensionId === 2) {
+            waterMaskBuffer = new Uint8Array(buffer, pos, extensionLength);
+        }
+        pos += extensionLength;
+    }
 }
