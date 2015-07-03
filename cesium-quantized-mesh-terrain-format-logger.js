@@ -146,7 +146,7 @@ function loadQuantizedMeshTerrainData(buffer) {
     }
 
     for (i = 0; i < indices.length; ) {
-        addRow("triangles", i/3, "[" + indices[i] + " | " + indices[i + 1] + " | " + indices[i + 2] + "]");
+        addRow("triangles", [i/3], [indices[i], indices[i + 1], indices[i + 2]]);
         i += 3;
     }
 
@@ -199,7 +199,10 @@ function loadQuantizedMeshTerrainData(buffer) {
             encodedNormalBuffer = new Uint8Array(buffer, pos, vertexCount * 2);
 
             for (i = 0; i < vertexCount; ) {
-                addRow("normals", encodedNormalBuffer[i], encodedNormalBuffer[i+1]);
+            	var decoded = [0,0,0];
+            	var encodedX = encodedNormalBuffer[i];
+            	var encodedY = encodedNormalBuffer[i+1];
+                addRow("normals", [encodedX, encodedY], octDecode(encodedX, encodedY));
                 i += 2;
             }
 
@@ -209,3 +212,57 @@ function loadQuantizedMeshTerrainData(buffer) {
         pos += extensionLength;
     }
 }
+
+
+// oct decoding
+// =============
+var octDecode = function(x, y) {
+	var fromSNorm = function(value) {
+		var clamp = function(value, min, max) {
+			return value < min ? min : (value > max ? max : value);
+		};
+
+        return clamp(value, 0.0, 255.0) / 255.0 * 2.0 - 1.0;
+	};
+
+	var signNotZero = function(value) {
+        return value < 0.0 ? -1.0 : 1.0;
+    };
+
+	var normalize = function(cartesian) {
+		var magnitude = function(cartesian) {
+			var magnitudeSquared = function(cartesian) {
+				return cartesian[0] * cartesian[0] + cartesian[1] * cartesian[1] + cartesian[2] * cartesian[2];
+			};
+
+			return Math.sqrt(magnitudeSquared(cartesian));
+		};
+
+		var mag = magnitude(cartesian);
+
+		cartesian[0] /= mag;
+		cartesian[1] /= mag;
+		cartesian[2] /= mag;
+
+		return cartesian;
+	};
+
+	if (x < 0 || x > 255 || y < 0 || y > 255) {
+		throw new DeveloperError('x and y must be a signed normalized integer between 0 and 255');
+	}
+
+	var result = [0,0,0]
+
+	// result holds x,y,z
+	result[0] = fromSNorm(x);
+	result[1] = fromSNorm(y);
+	result[2] = 1.0 - (Math.abs(result[0]) + Math.abs(result[1]));
+
+	if (result[2] < 0.0) {
+		var oldVX = result[0];
+		result[0] = (1.0 - Math.abs(result[1])) * signNotZero(oldVX);
+		result[1] = (1.0 - Math.abs(oldVX)) * signNotZero(result[1]);
+	}
+
+	return normalize(result);
+};
